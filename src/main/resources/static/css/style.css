@@ -1,0 +1,123 @@
+/* General styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #ff5f6d, #ffc3a0);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    animation: gradientShift 10s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0% {
+        background: linear-gradient(135deg, #ff5f6d, #ffc3a0);
+    }
+    50% {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+    }
+    100% {
+        background: linear-gradient(135deg, #00bcd4, #ff9800);
+    }
+}
+
+/* Container */
+.container {
+    width: 90%;
+    max-width: 450px;
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #333;
+    animation: popIn 0.5s ease-in-out;
+}
+
+/* Pop-in effect */
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Headings */
+h2 {
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+    color: #ff6f61;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Input fields */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: block;
+    color: #ff6f61;
+}
+
+.input-group input, .input-group select {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.input-group input:focus, .input-group select:focus {
+    border-color: #ff6f61;
+    outline: none;
+    box-shadow: 0 0 10px rgba(255, 111, 97, 0.5);
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #ff6f61, #ff7f50);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #ff7f50, #ff6f61);
+    transform: translateY(-3px);
+}
+
+/* Links */
+p {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #ff6f61;
+}
+
+p a {
+    color: #ff6f61;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+p a:hover {
+    color: #ffc3a0;
+    text-decoration: underline;
+}
