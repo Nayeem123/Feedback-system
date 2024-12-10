@@ -1,40 +1,33 @@
 package feedback_system.dto;
 
-public class UserDto {
+import feedback_system.entity.Role;
+import feedback_system.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class UserDto {
+    private Long id;
     private String username;
     private String password;
     private String fullname;
+    private List<String> roles = new ArrayList<>();
 
-    public UserDto(String username, String password, String fullname) {
-        super();
-        this.username = username;
-        this.password = password;
-        this.fullname = fullname;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public static UserDto getUserDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setFullname(user.getFullname());
+        userDto.setUsername(user.getUsername());
+        userDto.setRoles(user.getRoles());
+        return userDto;
     }
 
     @Override

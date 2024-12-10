@@ -2,9 +2,13 @@ package feedback_system.configuration;
 
 import java.util.Collection;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Getter
+@Setter
 public class CustomUserDetails implements UserDetails {
 
     private String username;
@@ -18,10 +22,6 @@ public class CustomUserDetails implements UserDetails {
         this.password = password;
         this.authorities = authorities;
         this.fullname = fullname;
-    }
-
-    public String getFullname() {
-        return fullname;
     }
 
     @Override

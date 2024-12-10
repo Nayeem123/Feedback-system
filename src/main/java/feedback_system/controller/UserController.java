@@ -1,20 +1,23 @@
 package feedback_system.controller;
 
 import java.security.Principal;
+import java.util.Map;
 
+import feedback_system.dto.RoleDto;
 import feedback_system.dto.UserDto;
 import feedback_system.entity.User;
 import feedback_system.service.UserService;
+import feedback_system.utility.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
     @Autowired
@@ -26,34 +29,36 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/home")
-    public String home(Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        model.addAttribute("userdetail", userDetails);
-        return "home";
+    @PostMapping("/api/login")
+    public ApiResponse login(@RequestHeader Map<String,String> header,@RequestBody UserDto userDto) {
+       String name =  header.get("username");
+       System.out.println("/login called");
+        //UserDetails userDetails = userDetailsService.loadUserByUsername(header.get("username"));
+        return userService.login(userDto);
     }
 
-    @GetMapping("/login")
-    public String login(Model model, UserDto userDto) {
-
-        model.addAttribute("user", userDto);
-        return "login";
+    @PostMapping("/user/create")
+    public ApiResponse createUser(@RequestBody UserDto userDto) {
+        System.out.println(userDto.getRoles());
+        return userService.createUserByAdmin(userDto);
     }
 
-    @GetMapping("/register")
-    public String register(Model model, UserDto userDto) {
-        model.addAttribute("user", userDto);
-        return "register";
+    @PostMapping("/user/delete")
+    public ApiResponse delete(@RequestParam(name = "id") Long id) {
+        System.out.println(" id : " + id);
+        return userService.deleteUser(id);
     }
 
-    @PostMapping("/register")
-    public String registerSava(@ModelAttribute("user") UserDto userDto, Model model) {
-        User user = userService.findByUsername(userDto.getUsername());
-        if (user != null) {
-            model.addAttribute("Userexist", user);
-            return "register";
-        }
-        userService.save(userDto);
-        return "redirect:/register?success";
+    @PostMapping("/user/assign-role")
+    public ApiResponse assignRole(@RequestBody RoleDto roleDto) {
+
+        return userService.addRoleToUser(roleDto);
     }
+
+    @GetMapping("/user/fetch")
+    public ApiResponse fetchAllUser() {
+
+        return userService.findAllUsers();
+    }
+
 }
