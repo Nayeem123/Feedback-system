@@ -129,6 +129,34 @@ public class UserServiceImpl implements UserService {
         return prepairResponse.deleteUserFailed(id);
     }
 
+    @Override
+    public ApiResponse updateUser(UserDto userDto) {
+        System.out.println(userDto.toString());
+        PrepairResponse prepairResponse = new PrepairResponse();
+        User dbUser = userRepo.findByUsername(userDto.getUsername());
+        if (dbUser == null){
+            return prepairResponse.updateUserFailed(userDto.getUsername());
+        }
+
+        User updatedUser = updateUser(dbUser, userDto);
+        return prepairResponse.updateUserSuccess(updatedUser.getUsername());
+    }
+
+    private User updateUser(User dbUser, UserDto userDto) {
+        dbUser.setFullname(userDto.getFullname());
+        dbUser.setPassword(userDto.getPassword());
+        if (!userDto.getRoles().isEmpty()){
+            List<String> roles = dbUser.getRoles();
+            for(String role : userDto.getRoles()){
+                if(!roles.contains(role)){
+                    roles.add(role);
+                }
+            }
+            dbUser.setRoles(roles);
+        }
+        return userRepo.save(dbUser);
+    }
+
     private User updateRole(User dbUser, String newRole) {
         List<String> existingRole = dbUser.getRoles();
         existingRole.add(newRole);

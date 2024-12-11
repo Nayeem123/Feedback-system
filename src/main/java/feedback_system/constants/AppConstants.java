@@ -14,8 +14,10 @@ public class AppConstants {
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
     public static final String ROLE_ADDED = "Role Added Succesfully";
     public static final String ALL_USER_FETCHED = "All User Fetched Succesfully";
+    public static final String USER_NOT_FOUND_TO_UPADTE = "User not found to update with username : ";
 
 
     public static final String USER_DELETED = "User Deleted Succesfully : ";
     public static final String USER_NOT_FOUND_TO_DELETE = "User not found to delete with id : ";
+    public static final String USER_UPDATED = "User updated succesfully for username : ";
 }

@@ -71,4 +71,19 @@ public class PrepairResponse {
         apiResponse.setMessage(AppConstants.USER_NOT_FOUND_TO_DELETE + id);
         return apiResponse;
     }
+
+    public ApiResponse updateUserFailed(String username) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setError(AppConstants.FALSE);
+        apiResponse.setMessage(AppConstants.USER_NOT_FOUND_TO_UPADTE + username);
+        return apiResponse;
+    }
+
+    public ApiResponse updateUserSuccess(String username) {
+
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setError(AppConstants.FALSE);
+        apiResponse.setMessage(AppConstants.USER_UPDATED + username);
+        return apiResponse;
+    }
 }

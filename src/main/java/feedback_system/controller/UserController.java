@@ -45,8 +45,14 @@ public class UserController {
 
     @PostMapping("/user/delete")
     public ApiResponse delete(@RequestParam(name = "id") Long id) {
-        System.out.println(" id : " + id);
+        System.out.println(" /delete call for id : " + id);
         return userService.deleteUser(id);
+    }
+
+    @PostMapping("/user/update")
+    public ApiResponse updateUser(@RequestBody UserDto userDto) {
+        System.out.println(" /update call");
+        return userService.updateUser(userDto);
     }
 
     @PostMapping("/user/assign-role")

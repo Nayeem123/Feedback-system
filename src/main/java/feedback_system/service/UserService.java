@@ -23,4 +23,6 @@ public interface UserService {
 
 
     ApiResponse deleteUser(Long id);
+
+    ApiResponse updateUser(UserDto userDto);
 }
