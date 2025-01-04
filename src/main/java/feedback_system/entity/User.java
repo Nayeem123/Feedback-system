@@ -23,6 +23,8 @@ public class User {
     private String username;
     private String password;
     private String fullname;
+    private String gender;
+    private String mobileNumber;
     private List<String> roles = new ArrayList<>();
 
     @Override

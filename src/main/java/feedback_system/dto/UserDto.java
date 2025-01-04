@@ -19,6 +19,8 @@ public class UserDto {
     private String username;
     private String password;
     private String fullname;
+    private String gender;
+    private String mobileNumber;
     private List<String> roles = new ArrayList<>();
 
     public static UserDto getUserDto(User user) {
@@ -26,6 +28,8 @@ public class UserDto {
         userDto.setId(user.getId());
         userDto.setFullname(user.getFullname());
         userDto.setUsername(user.getUsername());
+        userDto.setGender(user.getGender());
+        userDto.setMobileNumber(user.getMobileNumber());
         userDto.setRoles(user.getRoles());
         return userDto;
     }

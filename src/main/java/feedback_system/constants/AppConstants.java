@@ -20,4 +20,9 @@ public class AppConstants {
     public static final String USER_DELETED = "User Deleted Succesfully : ";
     public static final String USER_NOT_FOUND_TO_DELETE = "User not found to delete with id : ";
     public static final String USER_UPDATED = "User updated succesfully for username : ";
+    public static final String FEEDBACK_CATEGORIES_FETCHED = "Feedback category fetched succesfully";
+    public static final String FEEDBACK_CATEGORY_ADDED = "Feedback category added";
+    public static final String FEEDBACK_CATEGORY_NAME_EXISTS = "Feedback category name exists";
+    public static final String FEEDBACK_CATEGORIES_NOT_PRESENT = "Feedback category not exists";
+
 }

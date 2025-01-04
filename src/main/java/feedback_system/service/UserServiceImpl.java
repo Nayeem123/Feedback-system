@@ -143,8 +143,12 @@ public class UserServiceImpl implements UserService {
     }
 
     private User updateUser(User dbUser, UserDto userDto) {
-        dbUser.setFullname(userDto.getFullname());
-        dbUser.setPassword(userDto.getPassword());
+        if(userDto.getFullname() != null)
+            dbUser.setFullname(userDto.getFullname());
+        if(userDto.getPassword() != null)
+            dbUser.setPassword(userDto.getPassword());
+        if(userDto.getMobileNumber() != null)
+            dbUser.setMobileNumber(userDto.getMobileNumber());
         if (!userDto.getRoles().isEmpty()){
             List<String> roles = dbUser.getRoles();
             for(String role : userDto.getRoles()){
@@ -176,6 +180,8 @@ public class UserServiceImpl implements UserService {
         user.setUsername(userDto.getUsername());
         user.setPassword(userDto.getPassword());
         user.setFullname(userDto.getFullname());
+        user.setGender(userDto.getGender());
+        user.setMobileNumber(userDto.getMobileNumber());
         user.setRoles(Arrays.asList(AppConstants.ROLE_USER));
         return userRepo.save(user);
 

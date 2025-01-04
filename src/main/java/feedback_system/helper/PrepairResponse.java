@@ -86,4 +86,12 @@ public class PrepairResponse {
         apiResponse.setMessage(AppConstants.USER_UPDATED + username);
         return apiResponse;
     }
+    public ApiResponse setSuccessResponse(ApiResponse apiResponse){
+        apiResponse.setError(AppConstants.FALSE);
+        return apiResponse;
+    }
+    public ApiResponse setApiResponseFail(ApiResponse apiResponse){
+        apiResponse.setError(AppConstants.TRUE);
+        return apiResponse;
+    }
 }

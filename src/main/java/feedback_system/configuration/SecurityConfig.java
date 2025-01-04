@@ -26,7 +26,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeHttpRequests().requestMatchers("/api/**").permitAll()
-                .requestMatchers("/user/**").permitAll();
+                .requestMatchers("/user/**").permitAll()
+                .requestMatchers("/feedback/**").permitAll();
                 //.requestMatchers("home")
 //                .permitAll().and().formLogin().loginPage("/login").loginProcessingUrl("/login")
 //                .defaultSuccessUrl("/home", true).permitAll().and().logout().invalidateHttpSession(true)
