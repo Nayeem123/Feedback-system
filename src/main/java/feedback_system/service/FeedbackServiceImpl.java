@@ -2,9 +2,12 @@ package feedback_system.service;
 
 import feedback_system.constants.AppConstants;
 import feedback_system.dto.FeedbackCategoryDto;
+import feedback_system.dto.FeedbackDto;
+import feedback_system.entity.Feedback;
 import feedback_system.entity.FeedbackCategory;
 import feedback_system.helper.PrepairResponse;
 import feedback_system.repository.FeedbackCategoriesRepo;
+import feedback_system.repository.FeedbackRepo;
 import feedback_system.utility.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,8 @@ public class FeedbackServiceImpl implements FeedbackService{
 
     @Autowired
     private FeedbackCategoriesRepo feedbackCategoriesRepo;
+    @Autowired
+    private FeedbackRepo feedbackRepo;
 
     @Override
     public ApiResponse showFeedbackCategories() {
@@ -59,4 +64,43 @@ public class FeedbackServiceImpl implements FeedbackService{
         feedbackCategory.setCategoryDesc(feedbackCategoryDto.getCategoryDesc());
         return feedbackCategoriesRepo.save(feedbackCategory);
     }
+    @Override
+    public ApiResponse submitFeedback(FeedbackDto feedbackDto){
+        ApiResponse apiResponse = new ApiResponse();
+        PrepairResponse prepairResponse = new PrepairResponse();
+        Feedback feedback = saveFeedback(feedbackDto);
+        apiResponse.setFeedbackDto(feedbackDto);
+        apiResponse.setMessage(AppConstants.FEEDBACK_SUBMITTED);
+        return prepairResponse.setSuccessResponse(apiResponse);
+    }
+
+
+    private Feedback saveFeedback(FeedbackDto feedbackDto) {
+        Feedback feedback = new Feedback();
+        feedback.setUsername(feedbackDto.getUsername());
+        feedback.setCategoryName(feedbackDto.getCategoryName());
+        feedback.setStatus(feedbackDto.getStatus());
+        feedback.setQuestionAnswermap(feedbackDto.getQuestionAnswermap());
+        return feedbackRepo.save(feedback);
+    }
+    @Override
+    public ApiResponse showFeedback(String username) {
+        ApiResponse apiResponse = new ApiResponse();
+        PrepairResponse prepairResponse = new PrepairResponse();
+        //List<Feedback> feedbacks = feedbackRepo.findAll();
+        System.out.println(" service " + username.toString());
+        List<Feedback> feedbacks = feedbackRepo.findAllByUsername(username);
+        System.out.println(feedbacks);
+        if (!feedbacks.isEmpty()){
+            List<FeedbackDto> feedbackDtoList = new ArrayList<>();
+            feedbacks.stream().forEach(feedback ->
+                    feedbackDtoList.add(FeedbackDto.getFeedbackDto(feedback)));
+            apiResponse.setFeedbackDtoList(feedbackDtoList);
+            apiResponse.setMessage(AppConstants.FEEDBACK_GET);
+            return prepairResponse.setSuccessResponse(apiResponse);
+        }
+        apiResponse.setMessage(AppConstants.FEEDBACK_NOT_FOUND);
+        return prepairResponse.setSuccessResponse(apiResponse);
+    }
+
 }

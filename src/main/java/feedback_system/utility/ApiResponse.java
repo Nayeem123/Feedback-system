@@ -1,6 +1,7 @@
 package feedback_system.utility;
 
 import feedback_system.dto.FeedbackCategoryDto;
+import feedback_system.dto.FeedbackDto;
 import feedback_system.dto.UserDto;
 import feedback_system.entity.FeedbackCategory;
 import lombok.*;
@@ -19,4 +20,6 @@ public class ApiResponse {
     private List<UserDto> userList;
     private FeedbackCategoryDto feedbackCategoryDto;
     private List<FeedbackCategoryDto> feedbackCategoryList;
+    private FeedbackDto feedbackDto;
+    private List<FeedbackDto> feedbackDtoList;
 }

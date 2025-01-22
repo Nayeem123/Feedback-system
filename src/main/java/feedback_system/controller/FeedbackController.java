@@ -1,12 +1,11 @@
 package feedback_system.controller;
 
 import feedback_system.dto.FeedbackCategoryDto;
+import feedback_system.dto.FeedbackDto;
+import feedback_system.entity.Feedback;
 import feedback_system.service.FeedbackService;
 import feedback_system.utility.ApiResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class FeedbackController {
@@ -23,6 +22,16 @@ public class FeedbackController {
     @PostMapping("/feedback/add-categories")
     public ApiResponse addFeedbackCategories(@RequestBody FeedbackCategoryDto feedbackCategoryDto){
         return feedbackService.addFeedbackCategories(feedbackCategoryDto);
+    }
+    @PostMapping("/feedback/submit")
+    public ApiResponse submitFeedback(@RequestBody FeedbackDto feedbackDto){
+        System.out.println(feedbackDto.toString());
+        return feedbackService.submitFeedback(feedbackDto);
+    }
+    @GetMapping("/feedback/show-feedback")
+    public ApiResponse showFeedback(@RequestParam("username") String username){
+        System.out.println(" ================= "+ username);
+        return feedbackService.showFeedback(username);
     }
 
 }
