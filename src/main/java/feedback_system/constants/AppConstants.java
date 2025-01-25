@@ -26,6 +26,13 @@ public class AppConstants {
     public static final String FEEDBACK_CATEGORIES_NOT_PRESENT = "Feedback category not exists";
     public static final String FEEDBACK_SUBMITTED = "Feedback submitted succesfully";
     public static final String FEEDBACK_GET = "Feedback Fetched succesfully";
+    public static final String FEEDBACK_GET_ALL = "All Feedback Fetched succesfully";
     public static final String FEEDBACK_NOT_FOUND = "Feedback Not found";
+    public static final String RESOLVED = "RESOLVED";
+    public static final String FEEDBACK_RESOLVED = "Feedback status changed to Resolved";
+    public static final String INPROGRESS = "INPROGRESS";
+    public static final String FEEDBACK_INPROGRESS= "Feedback status changed to In-Progress";
+    public static final String PASSWORD_UPDATED= "Password updated";
+    public static final String OLD_PASSWORD_NOT_MATCHED= "Old Password not matching";
 
 }

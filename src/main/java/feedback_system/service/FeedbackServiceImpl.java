@@ -9,6 +9,8 @@ import feedback_system.helper.PrepairResponse;
 import feedback_system.repository.FeedbackCategoriesRepo;
 import feedback_system.repository.FeedbackRepo;
 import feedback_system.utility.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.util.Optional;
 @Service
 public class FeedbackServiceImpl implements FeedbackService{
 
+    private static final Logger log = LoggerFactory.getLogger(FeedbackServiceImpl.class);
     @Autowired
     private FeedbackCategoriesRepo feedbackCategoriesRepo;
     @Autowired
@@ -81,6 +84,9 @@ public class FeedbackServiceImpl implements FeedbackService{
         feedback.setCategoryName(feedbackDto.getCategoryName());
         feedback.setStatus(feedbackDto.getStatus());
         feedback.setQuestionAnswermap(feedbackDto.getQuestionAnswermap());
+        feedback.setAnonymous(feedbackDto.isAnonymous());
+        feedback.setPriority(feedbackDto.getPriority());
+        feedback.setRemarks(feedbackDto.getRemarks());
         return feedbackRepo.save(feedback);
     }
     @Override
@@ -102,5 +108,56 @@ public class FeedbackServiceImpl implements FeedbackService{
         apiResponse.setMessage(AppConstants.FEEDBACK_NOT_FOUND);
         return prepairResponse.setSuccessResponse(apiResponse);
     }
+
+    @Override
+    public ApiResponse showAllFeedback() {
+        ApiResponse apiResponse = new ApiResponse();
+        PrepairResponse prepairResponse = new PrepairResponse();
+        List<Feedback> feedbacks = feedbackRepo.findAll();
+
+        if (!feedbacks.isEmpty()){
+            List<FeedbackDto> feedbackDtoList = new ArrayList<>();
+            feedbacks.stream().forEach(feedback ->
+                    feedbackDtoList.add(FeedbackDto.getFeedbackDto(feedback)));
+            apiResponse.setFeedbackDtoList(feedbackDtoList);
+            apiResponse.setMessage(AppConstants.FEEDBACK_GET_ALL);
+            return prepairResponse.setSuccessResponse(apiResponse);
+        }
+        apiResponse.setMessage(AppConstants.FEEDBACK_NOT_FOUND);
+        return prepairResponse.setSuccessResponse(apiResponse);
+    }
+
+    @Override
+    public ApiResponse resolveFeedback(FeedbackDto feedbackDto) {
+        ApiResponse apiResponse = new ApiResponse();
+        PrepairResponse prepairResponse = new PrepairResponse();
+        //System.out.println(" id to resole " + feedbackDto.getId());
+        try{
+            Feedback existingFeedback = feedbackRepo.findById(feedbackDto.getId())
+                    .orElseThrow(()-> new RuntimeException("Feedback not found"));
+            updateFeedback(existingFeedback,feedbackDto,apiResponse);
+
+        }catch (Exception exception){
+            log.error("Error while setting feedback status");
+        }
+       return prepairResponse.setSuccessResponse(apiResponse);
+    }
+
+    private void updateFeedback(Feedback existingFeedback,FeedbackDto feedbackDto,ApiResponse apiResponse) {
+
+        if (feedbackDto != null && feedbackDto.getAction().equalsIgnoreCase(AppConstants.RESOLVED)){
+            existingFeedback.setRemarks(feedbackDto.getRemarks());
+            existingFeedback.setStatus(feedbackDto.getStatus());
+            apiResponse.setMessage(AppConstants.FEEDBACK_RESOLVED);
+            feedbackRepo.save(existingFeedback);
+        }
+        else if (feedbackDto != null && feedbackDto.getAction().equalsIgnoreCase(AppConstants.INPROGRESS)){
+            existingFeedback.setRemarks(feedbackDto.getRemarks());
+            existingFeedback.setStatus(feedbackDto.getStatus());
+            apiResponse.setMessage(AppConstants.FEEDBACK_INPROGRESS);
+            feedbackRepo.save(existingFeedback);
+        }
+    }
+
 
 }

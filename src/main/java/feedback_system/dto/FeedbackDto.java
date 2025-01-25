@@ -20,6 +20,10 @@ public class FeedbackDto {
     private String categoryName;
     private String status;
     private Map<String,String> questionAnswermap;
+    private boolean anonymous;
+    private String priority;
+    private String remarks;
+    private String action;
 
     public static FeedbackDto getFeedbackDto(Feedback feedback){
         FeedbackDto feedbackDto = new FeedbackDto();
@@ -28,6 +32,9 @@ public class FeedbackDto {
         feedbackDto.setCategoryName(feedback.getCategoryName());
         feedbackDto.setStatus(feedback.getStatus());
         feedbackDto.setQuestionAnswermap(feedback.getQuestionAnswermap());
+        feedbackDto.setAnonymous(feedback.isAnonymous());
+        feedbackDto.setPriority(feedback.getPriority());
+        feedbackDto.setRemarks(feedback.getRemarks());
         return feedbackDto;
     }
 }

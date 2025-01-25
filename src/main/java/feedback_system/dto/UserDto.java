@@ -22,6 +22,7 @@ public class UserDto {
     private String gender;
     private String mobileNumber;
     private List<String> roles = new ArrayList<>();
+    private String oldPassword;
 
     public static UserDto getUserDto(User user) {
         UserDto userDto = new UserDto();

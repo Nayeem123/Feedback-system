@@ -9,5 +9,7 @@ public interface FeedbackService {
     ApiResponse addFeedbackCategories(FeedbackCategoryDto feedbackCategoryDto);
     ApiResponse submitFeedback(FeedbackDto feedbackDto);
     ApiResponse showFeedback(String username);
+    ApiResponse showAllFeedback();
+    ApiResponse resolveFeedback(FeedbackDto feedbackDto);
 
 }

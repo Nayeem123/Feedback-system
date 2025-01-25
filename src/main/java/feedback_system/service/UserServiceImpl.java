@@ -3,6 +3,7 @@ package feedback_system.service;
 import feedback_system.constants.AppConstants;
 import feedback_system.dto.RoleDto;
 import feedback_system.dto.UserDto;
+import feedback_system.entity.Feedback;
 import feedback_system.entity.Role;
 import feedback_system.entity.User;
 import feedback_system.helper.PrepairResponse;
@@ -197,5 +198,31 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public ApiResponse changePassword(UserDto userDto) {
+        ApiResponse apiResponse = new ApiResponse();
+        PrepairResponse prepairResponse = new PrepairResponse();
+        if(userDto.getUsername() != null){
+
+            User feedback = userRepo.findByUsername(userDto.getUsername());
+            if(feedback == null){
+                apiResponse.setMessage(AppConstants.USER_NOT_FOUND);
+                return prepairResponse.setApiResponseFail(apiResponse);
+            }
+            if (feedback.getPassword().equals(userDto.getOldPassword())){
+                feedback.setPassword(userDto.getPassword());
+                userRepo.save(feedback);
+                apiResponse.setMessage(AppConstants.PASSWORD_UPDATED);
+                return prepairResponse.setSuccessResponse(apiResponse);
+            }
+            else {
+                apiResponse.setMessage(AppConstants.OLD_PASSWORD_NOT_MATCHED);
+                return prepairResponse.setApiResponseFail(apiResponse);
+            }
+        }
+        apiResponse.setMessage(AppConstants.USER_NOT_FOUND);
+        return prepairResponse.setApiResponseFail(apiResponse);
     }
 }

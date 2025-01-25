@@ -8,6 +8,7 @@ import feedback_system.utility.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class FeedbackController {
 
     private FeedbackService feedbackService;
@@ -32,6 +33,18 @@ public class FeedbackController {
     public ApiResponse showFeedback(@RequestParam("username") String username){
         System.out.println(" ================= "+ username);
         return feedbackService.showFeedback(username);
+    }
+
+    @GetMapping("/feedback/show-all-feedback")
+    public ApiResponse showAllFeedback(){
+        System.out.println(" ================= ");
+        return feedbackService.showAllFeedback();
+    }
+
+    @PostMapping("/support/feedback/resolve")
+    public ApiResponse resolveFeedback(@RequestBody FeedbackDto feedbackDto){
+        System.out.println(feedbackDto.getId());
+        return feedbackService.resolveFeedback(feedbackDto);
     }
 
 }

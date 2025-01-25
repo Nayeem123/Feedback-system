@@ -66,5 +66,10 @@ public class UserController {
 
         return userService.findAllUsers();
     }
+    @PostMapping("/user/change-password")
+    public ApiResponse changePassword(@RequestBody UserDto userDto) {
+
+        return userService.changePassword(userDto);
+    }
 
 }

@@ -24,6 +24,10 @@ public class Feedback {
     private String status;
     @Column(columnDefinition = "json")
     private String questionAnswer;
+    private boolean anonymous;
+    private String priority;
+    private String remarks;
+
     @Transient
     private Map<String,String> questionAnswermap = new HashMap<>();
 
