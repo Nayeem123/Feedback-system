@@ -3,12 +3,15 @@ package feedback_system.entity;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feedback_system.dto.QuestionAnswer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -30,13 +33,15 @@ public class Feedback {
 
     @Transient
     private Map<String,String> questionAnswermap = new HashMap<>();
+    @Transient
+    private List<QuestionAnswer> questionAnswerList = new ArrayList<>();
 
     @PostLoad
     private void loadQuestionAnswermap(){
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            this.questionAnswermap = objectMapper.readValue(questionAnswer,
-                    new TypeReference<Map<String, String>>() {});
+            this.questionAnswerList = objectMapper.readValue(questionAnswer,
+                    new TypeReference<List<QuestionAnswer>>() {});
         }catch (Exception exception){
             exception.printStackTrace();
         }
@@ -47,7 +52,7 @@ public class Feedback {
     private void saveQuestionAnswermap(){
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            this.questionAnswer = objectMapper.writeValueAsString(questionAnswermap);
+            this.questionAnswer = objectMapper.writeValueAsString(questionAnswerList);
         }catch (Exception exception){
             exception.printStackTrace();
         }

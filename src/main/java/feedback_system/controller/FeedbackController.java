@@ -26,7 +26,7 @@ public class FeedbackController {
     }
     @PostMapping("/feedback/submit")
     public ApiResponse submitFeedback(@RequestBody FeedbackDto feedbackDto){
-        System.out.println(feedbackDto.toString());
+        System.out.println(feedbackDto.getQuestionAnswermap());
         return feedbackService.submitFeedback(feedbackDto);
     }
     @GetMapping("/feedback/show-feedback")

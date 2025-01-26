@@ -3,6 +3,7 @@ package feedback_system.service;
 import feedback_system.constants.AppConstants;
 import feedback_system.dto.FeedbackCategoryDto;
 import feedback_system.dto.FeedbackDto;
+import feedback_system.dto.QuestionAnswer;
 import feedback_system.entity.Feedback;
 import feedback_system.entity.FeedbackCategory;
 import feedback_system.helper.PrepairResponse;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -83,7 +85,16 @@ public class FeedbackServiceImpl implements FeedbackService{
         feedback.setUsername(feedbackDto.getUsername());
         feedback.setCategoryName(feedbackDto.getCategoryName());
         feedback.setStatus(feedbackDto.getStatus());
-        feedback.setQuestionAnswermap(feedbackDto.getQuestionAnswermap());
+        //feedback.setQuestionAnswermap(feedbackDto.getQuestionAnswermap());
+        List<QuestionAnswer> questionAnswerList = new ArrayList<>();
+        if (feedbackDto.getQuestionAnswermap() != null) {
+            for (Map.Entry<String, String> entry : feedbackDto.getQuestionAnswermap().entrySet()) {
+                questionAnswerList.add(new QuestionAnswer(entry.getKey(), entry.getValue()));
+            }
+        }System.out.println(feedbackDto.getQuestionAnswermap());
+        System.out.println(" ======================== List below ");
+        System.out.println(questionAnswerList);
+        feedback.setQuestionAnswerList(questionAnswerList);
         feedback.setAnonymous(feedbackDto.isAnonymous());
         feedback.setPriority(feedbackDto.getPriority());
         feedback.setRemarks(feedbackDto.getRemarks());
