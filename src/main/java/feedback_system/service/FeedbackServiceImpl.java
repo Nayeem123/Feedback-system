@@ -1,24 +1,26 @@
 package feedback_system.service;
 
 import feedback_system.constants.AppConstants;
+import feedback_system.dto.DashboardDTO;
 import feedback_system.dto.FeedbackCategoryDto;
 import feedback_system.dto.FeedbackDto;
 import feedback_system.dto.QuestionAnswer;
 import feedback_system.entity.Feedback;
 import feedback_system.entity.FeedbackCategory;
+import feedback_system.entity.Role;
+import feedback_system.entity.User;
 import feedback_system.helper.PrepairResponse;
 import feedback_system.repository.FeedbackCategoriesRepo;
 import feedback_system.repository.FeedbackRepo;
+import feedback_system.repository.RoleRepo;
+import feedback_system.repository.UserRepo;
 import feedback_system.utility.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService{
@@ -28,6 +30,9 @@ public class FeedbackServiceImpl implements FeedbackService{
     private FeedbackCategoriesRepo feedbackCategoriesRepo;
     @Autowired
     private FeedbackRepo feedbackRepo;
+
+    @Autowired private UserRepo userRepo;
+    @Autowired private RoleRepo roleRepo;
 
     @Override
     public ApiResponse showFeedbackCategories() {
@@ -152,6 +157,194 @@ public class FeedbackServiceImpl implements FeedbackService{
             log.error("Error while setting feedback status");
         }
        return prepairResponse.setSuccessResponse(apiResponse);
+    }
+
+    @Override
+    public ApiResponse getDashboardData(String username) {
+        ApiResponse apiResponse = new ApiResponse();
+        User user = userRepo.findByUsername(username);
+        if (user == null)  {
+            apiResponse.setMessage("User not found");
+            apiResponse.setError(true);
+            return apiResponse;
+        }
+
+        Role requestedUserRole = roleRepo.findByUserId(user.getId());
+        if (requestedUserRole == null)  {
+            apiResponse.setMessage("User doesn't have any role");
+            apiResponse.setError(true);
+            return apiResponse;
+        }
+
+        apiResponse.setError(false);
+        apiResponse.setMessage("success");
+
+        List<Feedback> feedbacks = feedbackRepo.findAll();
+
+        if (feedbacks.isEmpty()){
+            apiResponse.setMessage("No feedbacks found");
+            apiResponse.setError(true);
+            apiResponse.setData(new ArrayList<>());
+            return apiResponse;
+        }
+
+        if(requestedUserRole.getRoles().contains("ROLE_SUPPORT")) {
+
+            Map<String, DashboardDTO> processedCategories = new HashMap<>();
+            feedbacks.stream().forEach(feedback -> {
+                DashboardDTO dashboardDTO = new DashboardDTO();
+                dashboardDTO.setFeedbackId(feedback.getId());
+                dashboardDTO.setCategoryName(feedback.getCategoryName());
+
+                if (processedCategories.containsKey(feedback.getCategoryName())) {
+                    dashboardDTO = processedCategories.get(feedback.getCategoryName());
+                }
+
+                if(feedback.getStatus().equalsIgnoreCase("OPEN")) {
+                    dashboardDTO.setOpenCount(dashboardDTO.getOpenCount() + 1);
+                } else if (feedback.getStatus().equalsIgnoreCase("RESOLVED")) {
+                    dashboardDTO.setResolvedCount(dashboardDTO.getResolvedCount() + 1);
+                } else if (feedback.getStatus().equalsIgnoreCase("INPROGRESS")) {
+                    dashboardDTO.setInProgressCount(dashboardDTO.getInProgressCount() + 1);
+                }
+
+                processedCategories.put(feedback.getCategoryName(), dashboardDTO);
+
+            });
+            apiResponse.setData(new ArrayList<>(processedCategories.values()));
+
+        } else if (requestedUserRole.getRoles().contains("ROLE_ADMIN")) {
+
+        } else {
+            apiResponse.setData(new ArrayList<>());
+        }
+
+        return apiResponse;
+    }
+
+    @Override
+    public ApiResponse getFeedbackDetails(String feedbackName) {
+        ApiResponse apiResponse = new ApiResponse();
+        Map<String, Object> data = new HashMap<>();
+        data.put("feedbackList", new ArrayList<>());
+        data.put("openCount", 0);
+        data.put("resolvedCount", 0);
+        data.put("inprogressCount", 0);
+        data.put("urgentCount", 0);
+        data.put("mediumCount", 0);
+        data.put("lowCount", 0);
+
+        apiResponse.setError(false);
+        apiResponse.setMessage("success");
+
+        List<Feedback> feedbacks = feedbackRepo.findAllByCategoryName(feedbackName);
+
+        if (feedbacks.isEmpty()){
+            apiResponse.setMessage("No feedbacks found");
+            apiResponse.setError(true);
+            apiResponse.setData(data);
+            return apiResponse;
+        }
+        List<Map<String, Object>> feedbackDetails = new ArrayList<>();
+
+        feedbacks.stream().forEach(feedback -> {
+            Map<String, Object> feedbackDetail = new HashMap<>();
+
+            if(feedback.getStatus().equalsIgnoreCase("OPEN")) {
+                data.put("openCount", ((Integer) data.get("openCount")) + 1);
+            } else if (feedback.getStatus().equalsIgnoreCase("RESOLVED")) {
+                data.put("resolvedCount", ((Integer) data.get("resolvedCount")) + 1);
+            } else if (feedback.getStatus().equalsIgnoreCase("INPROGRESS")) {
+                data.put("inprogressCount", ((Integer) data.get("inprogressCount")) + 1);
+            }
+
+            if(feedback.getPriority().equalsIgnoreCase("URGENT")) {
+                data.put("urgentCount", ((Integer) data.get("urgentCount")) + 1);
+            } else if (feedback.getPriority().equalsIgnoreCase("MEDIUM")) {
+                data.put("mediumCount", ((Integer) data.get("mediumCount")) + 1);
+            } else if (feedback.getPriority().equalsIgnoreCase("Low")) {
+                data.put("lowCount", ((Integer) data.get("lowCount")) + 1);
+            }
+
+            feedbackDetail.put("id", feedback.getId());
+            feedbackDetail.put("categoryName", feedback.getCategoryName());
+            feedbackDetail.put("priority", feedback.getPriority());
+            feedbackDetail.put("status", feedback.getStatus());
+            feedbackDetail.put("anonymous", feedback.isAnonymous());
+            feedbackDetail.put("username", feedback.getUsername());
+
+            feedbackDetails.add(feedbackDetail);
+
+        });
+
+        data.put("feedbackDetails", feedbackDetails);
+        apiResponse.setData(data);
+        return apiResponse;
+    }
+
+    @Override
+    public ApiResponse getFeedbackDetail(Long feedbackId) {
+        ApiResponse apiResponse = new ApiResponse();
+        Map<String, Object> data = new HashMap<>();
+
+
+        Feedback feedback = feedbackRepo.findById(feedbackId).orElse(null);
+        if (feedback == null) {
+            apiResponse.setMessage("No feedback found");
+            apiResponse.setError(true);
+            apiResponse.setData(data);
+            return apiResponse;
+        }
+
+        User user = userRepo.findByUsername(feedback.getUsername());
+
+        data.put("id", feedback.getId());
+        data.put("categoryName", feedback.getCategoryName());
+        data.put("username", feedback.getUsername());
+        data.put("fullName", user != null ? user.getFullname() : null);
+        data.put("feedback", feedback.getQuestionAnswerList());
+        data.put("comment", feedback.getRemarks());
+
+
+        apiResponse.setMessage("success");
+        apiResponse.setError(false);
+
+        apiResponse.setData(data);
+        return apiResponse;
+    }
+
+    @Override
+    public ApiResponse updateFeedback(FeedbackDto feedbackDto) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(feedbackDto);
+
+        if (feedbackDto.getId() == null || feedbackDto.getId() == 0
+        || feedbackDto.getStatus() == null || feedbackDto.getStatus().isEmpty()
+        || feedbackDto.getRemarks() == null || feedbackDto.getRemarks().isEmpty()) {
+
+            apiResponse.setMessage("Invalid parameter field/value found");
+            apiResponse.setError(true);
+            return apiResponse;
+        }
+
+        Feedback feedback = feedbackRepo.findById(feedbackDto.getId()).orElse(null);
+        if (feedback == null) {
+            apiResponse.setMessage("No feedback found");
+            apiResponse.setError(true);
+            return apiResponse;
+        }
+
+        feedback.setStatus(feedbackDto.getStatus());
+        feedback.setRemarks(feedbackDto.getRemarks());
+        feedbackRepo.save(feedback);
+
+
+        feedbackDto.setCategoryName(feedback.getCategoryName());
+        apiResponse.setData(feedbackDto);
+
+        apiResponse.setError(false);
+        apiResponse.setMessage("success");
+        return apiResponse;
     }
 
     private void updateFeedback(Feedback existingFeedback,FeedbackDto feedbackDto,ApiResponse apiResponse) {

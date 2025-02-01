@@ -3,17 +3,30 @@ package feedback_system.controller;
 import feedback_system.dto.FeedbackCategoryDto;
 import feedback_system.dto.FeedbackDto;
 import feedback_system.entity.Feedback;
+import feedback_system.entity.Role;
+import feedback_system.entity.User;
+import feedback_system.repository.RoleRepo;
 import feedback_system.service.FeedbackService;
+import feedback_system.service.UserService;
+import feedback_system.service.UserServiceImpl;
 import feedback_system.utility.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class FeedbackController {
 
+    private final UserServiceImpl userServiceImpl;
+    private UserService userService;
+
+    @Autowired private RoleRepo roleRepo;
+
     private FeedbackService feedbackService;
-    public FeedbackController(FeedbackService feedbackService){
+    public FeedbackController(FeedbackService feedbackService, UserServiceImpl userServiceImpl, UserService userService){
         this.feedbackService = feedbackService;
+        this.userServiceImpl = userServiceImpl;
+        this.userService = userService;
     }
     @GetMapping("/feedback/fetch-categories")
     public ApiResponse showFeedbackCategories(){
@@ -45,6 +58,33 @@ public class FeedbackController {
     public ApiResponse resolveFeedback(@RequestBody FeedbackDto feedbackDto){
         System.out.println(feedbackDto.getId());
         return feedbackService.resolveFeedback(feedbackDto);
+    }
+
+    @GetMapping("/dashboard/{username}")
+    public ApiResponse showAllFeedback(@PathVariable String username){
+        System.out.println(" ================= ");
+
+        return feedbackService.getDashboardData(username);
+    }
+
+    @GetMapping("/feedback/categories/{f_name}")
+    public ApiResponse getFeedbackCategories(@PathVariable(name = "f_name") String feedbackName){
+        System.out.println(feedbackName);
+
+        return feedbackService.getFeedbackDetails(feedbackName);
+    }
+
+    @GetMapping("/feedback/submissions/{id}")
+    public ApiResponse getFeedbackCategories(@PathVariable(name = "id") Long feedbackId){
+        System.out.println(feedbackId);
+
+        return feedbackService.getFeedbackDetail(feedbackId);
+    }
+
+    @PostMapping("/feedback/submissions/update")
+    public ApiResponse updateFeedback(@RequestBody FeedbackDto feedbackDto){
+        System.out.println(feedbackDto.getId());
+        return feedbackService.updateFeedback(feedbackDto);
     }
 
 }

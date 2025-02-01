@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface FeedbackRepo extends JpaRepository<Feedback,Long> {
     List<Feedback> findAllByUsername(String username);
+
+    List<Feedback> findAllByCategoryName(String categoryName);
 }

@@ -12,4 +12,10 @@ public interface FeedbackService {
     ApiResponse showAllFeedback();
     ApiResponse resolveFeedback(FeedbackDto feedbackDto);
 
+
+    ApiResponse getDashboardData(String username);
+    ApiResponse getFeedbackDetails(String feedbackName);
+    ApiResponse getFeedbackDetail(Long feedbackId);
+    ApiResponse updateFeedback(FeedbackDto feedbackDto);
+
 }

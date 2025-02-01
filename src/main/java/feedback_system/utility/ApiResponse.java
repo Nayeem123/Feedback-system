@@ -22,4 +22,5 @@ public class ApiResponse {
     private List<FeedbackCategoryDto> feedbackCategoryList;
     private FeedbackDto feedbackDto;
     private List<FeedbackDto> feedbackDtoList;
+    private Object data;
 }
