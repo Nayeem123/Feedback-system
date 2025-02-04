@@ -1,5 +1,6 @@
 package feedback_system.controller;
 
+import feedback_system.dto.CategoryDto;
 import feedback_system.dto.FeedbackCategoryDto;
 import feedback_system.dto.FeedbackDto;
 import feedback_system.entity.Feedback;
@@ -85,6 +86,12 @@ public class FeedbackController {
     public ApiResponse updateFeedback(@RequestBody FeedbackDto feedbackDto){
         System.out.println(feedbackDto.getId());
         return feedbackService.updateFeedback(feedbackDto);
+    }
+
+    @PostMapping("/feedback/category/questions")
+    public ApiResponse saveCategoryForm(@RequestBody CategoryDto categoryDto){
+        System.out.println(categoryDto.getCategory());
+        return feedbackService.saveCategoryForm(categoryDto);
     }
 
 }

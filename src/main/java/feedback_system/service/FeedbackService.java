@@ -1,5 +1,6 @@
 package feedback_system.service;
 
+import feedback_system.dto.CategoryDto;
 import feedback_system.dto.FeedbackCategoryDto;
 import feedback_system.dto.FeedbackDto;
 import feedback_system.utility.ApiResponse;
@@ -17,5 +18,6 @@ public interface FeedbackService {
     ApiResponse getFeedbackDetails(String feedbackName);
     ApiResponse getFeedbackDetail(Long feedbackId);
     ApiResponse updateFeedback(FeedbackDto feedbackDto);
+    ApiResponse saveCategoryForm(CategoryDto categoryDto);
 
 }

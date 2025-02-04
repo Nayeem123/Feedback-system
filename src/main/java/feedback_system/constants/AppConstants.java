@@ -11,6 +11,7 @@ public class AppConstants {
     public static final String INVALID_PASSWORD = "Invalid Password";
     public static final String USER_EXISTS = "User already exists";
     public static final String ROLE_USER = "ROLE_USER";
+    public static final String ROLE_SUPPORT= "ROLE_SUPPORT";
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
     public static final String ROLE_ADDED = "Role Added Succesfully";
     public static final String ALL_USER_FETCHED = "All User Fetched Succesfully";

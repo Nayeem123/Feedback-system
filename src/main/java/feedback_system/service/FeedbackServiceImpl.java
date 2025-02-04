@@ -1,19 +1,10 @@
 package feedback_system.service;
 
 import feedback_system.constants.AppConstants;
-import feedback_system.dto.DashboardDTO;
-import feedback_system.dto.FeedbackCategoryDto;
-import feedback_system.dto.FeedbackDto;
-import feedback_system.dto.QuestionAnswer;
-import feedback_system.entity.Feedback;
-import feedback_system.entity.FeedbackCategory;
-import feedback_system.entity.Role;
-import feedback_system.entity.User;
+import feedback_system.dto.*;
+import feedback_system.entity.*;
 import feedback_system.helper.PrepairResponse;
-import feedback_system.repository.FeedbackCategoriesRepo;
-import feedback_system.repository.FeedbackRepo;
-import feedback_system.repository.RoleRepo;
-import feedback_system.repository.UserRepo;
+import feedback_system.repository.*;
 import feedback_system.utility.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService{
@@ -33,6 +25,7 @@ public class FeedbackServiceImpl implements FeedbackService{
 
     @Autowired private UserRepo userRepo;
     @Autowired private RoleRepo roleRepo;
+    @Autowired private CategoryRepository categoryRepository;
 
     @Override
     public ApiResponse showFeedbackCategories() {
@@ -363,5 +356,38 @@ public class FeedbackServiceImpl implements FeedbackService{
         }
     }
 
+    @Override
+    public ApiResponse saveCategoryForm(CategoryDto categoryDto) {
 
+        ApiResponse apiResponse = new ApiResponse();
+        Category category = new Category();
+        category.setCategory(categoryDto.getCategory());
+
+        List<Question> questions = categoryDto.getQuestions().stream().map(q -> {
+            Question question = new Question();
+            question.setAnonymous(q.isAnonymous());
+            question.setQuestion(q.getQuestion());
+            question.setResponseType(q.getResponseType());
+            question.setNoOfOptions(q.getNoOfOptions());
+
+            List<OptionData> options = q.getOptionsData().stream().map(o -> {
+                OptionData option = new OptionData();
+                option.setName(o.getName());
+                option.setQuestion(question);
+                return option;
+            }).collect(Collectors.toList());
+
+            question.setOptionsData(options);
+            return question;
+        }).collect(Collectors.toList());
+
+        category.setQuestions(questions);
+        categoryRepository.save(category);
+
+
+        apiResponse.setMessage("SUCCESS");
+        apiResponse.setError(false);
+        apiResponse.setData(categoryDto);
+        return apiResponse;
+    }
 }
