@@ -365,6 +365,7 @@ public class FeedbackServiceImpl implements FeedbackService{
 
         List<Question> questions = categoryDto.getQuestions().stream().map(q -> {
             Question question = new Question();
+            question.setCategory(category);
             question.setAnonymous(q.isAnonymous());
             question.setQuestion(q.getQuestion());
             question.setResponseType(q.getResponseType());
@@ -387,6 +388,56 @@ public class FeedbackServiceImpl implements FeedbackService{
 
         apiResponse.setMessage("SUCCESS");
         apiResponse.setError(false);
+        apiResponse.setData(categoryDto);
+        return apiResponse;
+    }
+
+    @Override
+    public ApiResponse getCategoryForm(String username, String categoryName) {
+
+        ApiResponse apiResponse = new ApiResponse();
+        User user = userRepo.findByUsername(username);
+        if (user == null)  {
+            apiResponse.setMessage("User not found");
+            apiResponse.setError(true);
+            return apiResponse;
+        }
+
+        Role requestedUserRole = roleRepo.findByUserId(user.getId());
+        if (requestedUserRole == null)  {
+            apiResponse.setMessage("User doesn't have any role");
+            apiResponse.setError(true);
+            return apiResponse;
+        }
+
+        Category category = categoryRepository.findByCategory(categoryName);
+        if (category == null)  {
+            apiResponse.setMessage("Data not found for : "+categoryName);
+            apiResponse.setError(true);
+            return apiResponse;
+        }
+        System.out.println(category.getCategory());
+        CategoryDto  categoryDto = new CategoryDto();
+        categoryDto.setCategory(category.getCategory());
+
+        List<QuestionResponse> questions = category.getQuestions().stream().map(question -> {
+            QuestionResponse questionResponse = new QuestionResponse();
+            questionResponse.setQuestion(question.getQuestion());
+            questionResponse.setResponseType(question.getResponseType());
+            questionResponse.setNoOfOptions(question.getOptionsData().size());
+            questionResponse.setAnonymous(false); // Assuming anonymous is always false
+            questionResponse.setOptionsData(question.getOptionsData().stream().map(option -> {
+                OptionDataDto optionData = new OptionDataDto();
+                optionData.setName(option.getName());
+                return optionData;
+            }).collect(Collectors.toList()));
+
+            return questionResponse;
+        }).collect(Collectors.toList());
+
+        categoryDto.setQuestionResponses(questions);
+        apiResponse.setError(false);
+        apiResponse.setMessage("success");
         apiResponse.setData(categoryDto);
         return apiResponse;
     }

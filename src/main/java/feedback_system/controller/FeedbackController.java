@@ -94,4 +94,9 @@ public class FeedbackController {
         return feedbackService.saveCategoryForm(categoryDto);
     }
 
+    @GetMapping("/feedback/category/fetch-questions-form")
+    public ApiResponse getCategoryForm(@RequestParam("username") String username, @RequestParam("categoryName") String categoryName){
+        System.out.println(username);
+        return feedbackService.getCategoryForm(username,categoryName);
+    }
 }

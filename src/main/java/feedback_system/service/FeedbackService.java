@@ -19,5 +19,6 @@ public interface FeedbackService {
     ApiResponse getFeedbackDetail(Long feedbackId);
     ApiResponse updateFeedback(FeedbackDto feedbackDto);
     ApiResponse saveCategoryForm(CategoryDto categoryDto);
+    ApiResponse getCategoryForm(String username,String categoryName);
 
 }
