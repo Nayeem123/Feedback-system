@@ -151,13 +151,14 @@ public class UserServiceImpl implements UserService {
         if(userDto.getMobileNumber() != null)
             dbUser.setMobileNumber(userDto.getMobileNumber());
         if (!userDto.getRoles().isEmpty()){
-            List<String> roles = dbUser.getRoles();
-            for(String role : userDto.getRoles()){
-                if(!roles.contains(role)){
-                    roles.add(role);
-                }
-            }
-            dbUser.setRoles(roles);
+//            List<String> roles = dbUser.getRoles();
+//
+//            for(String role : userDto.getRoles()){
+//                if(!roles.contains(role)){
+//                    roles.add(role);
+//                }
+//            }
+            dbUser.setRoles(userDto.getRoles());
         }
         return userRepo.save(dbUser);
     }
@@ -184,8 +185,11 @@ public class UserServiceImpl implements UserService {
         user.setGender(userDto.getGender());
         user.setMobileNumber(userDto.getMobileNumber());
         //user.setRoles(Arrays.asList(AppConstants.ROLE_SUPPORT));
-
-        user.setRoles(Arrays.asList(AppConstants.ROLE_USER));
+        if(!userDto.getRoles().isEmpty()){
+            user.setRoles(userDto.getRoles());
+        }else{
+            user.setRoles(Arrays.asList(AppConstants.ROLE_USER));
+        }
         return userRepo.save(user);
 
     }

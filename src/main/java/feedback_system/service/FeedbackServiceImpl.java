@@ -180,8 +180,9 @@ public class FeedbackServiceImpl implements FeedbackService{
             apiResponse.setData(new ArrayList<>());
             return apiResponse;
         }
-
-        if(requestedUserRole.getRoles().contains("ROLE_SUPPORT")) {
+        System.out.println(requestedUserRole.getRoles());
+        System.out.println(user.getRoles());
+        if(user.getRoles().contains("ROLE_SUPPORT")) {
 
             Map<String, DashboardDTO> processedCategories = new HashMap<>();
             feedbacks.stream().forEach(feedback -> {
@@ -366,7 +367,10 @@ public class FeedbackServiceImpl implements FeedbackService{
         List<Question> questions = categoryDto.getQuestions().stream().map(q -> {
             Question question = new Question();
             question.setCategory(category);
-            question.setAnonymous(q.isAnonymous());
+            System.out.println(q.getIsAnonymous());
+
+            question.setAnonymous(q.getIsAnonymous().equalsIgnoreCase("true"));
+
             question.setQuestion(q.getQuestion());
             question.setResponseType(q.getResponseType());
             question.setNoOfOptions(q.getNoOfOptions());
@@ -426,7 +430,8 @@ public class FeedbackServiceImpl implements FeedbackService{
             questionResponse.setQuestion(question.getQuestion());
             questionResponse.setResponseType(question.getResponseType());
             questionResponse.setNoOfOptions(question.getOptionsData().size());
-            questionResponse.setAnonymous(false); // Assuming anonymous is always false
+            System.out.println( " 2222 " + question.isAnonymous());
+            questionResponse.setAnonymous(question.isAnonymous()); // Assuming anonymous is always false
             questionResponse.setOptionsData(question.getOptionsData().stream().map(option -> {
                 OptionDataDto optionData = new OptionDataDto();
                 optionData.setName(option.getName());

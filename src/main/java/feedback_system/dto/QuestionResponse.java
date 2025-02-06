@@ -12,5 +12,5 @@ public class QuestionResponse {
     private String responseType;
     private Integer noOfOptions;
     private List<OptionDataDto> optionsData;
-    private boolean anonymous;
+    private boolean isAnonymous;
 }

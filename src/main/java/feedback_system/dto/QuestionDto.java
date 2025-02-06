@@ -7,7 +7,7 @@ import java.util.List;
 @Getter
 @Setter
 public class QuestionDto {
-    private boolean isAnonymous;
+    private String isAnonymous;
     private String question;
     private String responseType;
     private Integer noOfOptions;
