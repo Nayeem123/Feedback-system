@@ -7,6 +7,7 @@ import java.util.List;
 @Getter
 @Setter
 public class QuestionResponse {
+    private Long id;
     private String question;
     private String responseType;
     private Integer noOfOptions;

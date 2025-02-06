@@ -422,6 +422,7 @@ public class FeedbackServiceImpl implements FeedbackService{
 
         List<QuestionResponse> questions = category.getQuestions().stream().map(question -> {
             QuestionResponse questionResponse = new QuestionResponse();
+            questionResponse.setId(question.getId());
             questionResponse.setQuestion(question.getQuestion());
             questionResponse.setResponseType(question.getResponseType());
             questionResponse.setNoOfOptions(question.getOptionsData().size());

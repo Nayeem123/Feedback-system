@@ -184,6 +184,7 @@ public class UserServiceImpl implements UserService {
         user.setGender(userDto.getGender());
         user.setMobileNumber(userDto.getMobileNumber());
         //user.setRoles(Arrays.asList(AppConstants.ROLE_SUPPORT));
+
         user.setRoles(Arrays.asList(AppConstants.ROLE_USER));
         return userRepo.save(user);
 
