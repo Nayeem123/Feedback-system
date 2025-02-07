@@ -298,6 +298,7 @@ public class FeedbackServiceImpl implements FeedbackService{
         data.put("fullName", user != null ? user.getFullname() : null);
         data.put("feedback", feedback.getQuestionAnswerList());
         data.put("comment", feedback.getRemarks());
+        data.put("anonymous", feedback.isAnonymous());
 
 
         apiResponse.setMessage("success");
