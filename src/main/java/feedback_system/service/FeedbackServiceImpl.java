@@ -1,5 +1,17 @@
 package feedback_system.service;
 
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import feedback_system.constants.AppConstants;
 import feedback_system.dto.*;
 import feedback_system.entity.*;
@@ -9,8 +21,12 @@ import feedback_system.utility.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -447,5 +463,97 @@ public class FeedbackServiceImpl implements FeedbackService{
         apiResponse.setMessage("success");
         apiResponse.setData(categoryDto);
         return apiResponse;
+    }
+    @Override
+    public ResponseEntity<byte[]> feedbackDownload(Long feedbackId) {
+        {
+            try {
+                Optional<Feedback> feedback = fetchFeedbackData(feedbackId);
+                List<FeedbackDto> feedbackList = new ArrayList<>();
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                PdfWriter writer = new PdfWriter(outputStream);
+                PdfDocument pdf = new PdfDocument(writer);
+                Document document = new Document(pdf, PageSize.A4);
+
+                // Set font
+                PdfFont titleFont = PdfFontFactory.createFont("Helvetica-Bold");
+                PdfFont normalFont = PdfFontFactory.createFont("Helvetica");
+
+                // Add Title
+                Paragraph title = new Paragraph("Feedback Report")
+                        .setFont(titleFont)
+                        .setFontSize(18)
+                        .setFontColor(ColorConstants.BLUE)
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setMarginBottom(20);
+                document.add(title);
+
+//                for (FeedbackDto feedback : feedbackList) {
+                    // Section Header
+                    document.add(new Paragraph("Feedback Details")
+                            .setFont(titleFont)
+                            .setFontSize(14)
+                            .setFontColor(ColorConstants.BLACK)
+                            .setUnderline()
+                            .setMarginBottom(10));
+                    if (feedback.isPresent()){
+                        // Feedback details with spacing
+                        document.add(new Paragraph("Feedback ID: " + feedback.get().getId()).setFont(normalFont).setFontSize(12));
+                        document.add(new Paragraph("Username: " + feedback.get().getUsername()).setFont(normalFont).setFontSize(12));
+                        document.add(new Paragraph("Category: " + feedback.get().getCategoryName()).setFont(normalFont).setFontSize(12));
+                        document.add(new Paragraph("Status: " + feedback.get().getStatus()).setFont(normalFont).setFontSize(12));
+                        document.add(new Paragraph("Priority: " + feedback.get().getPriority()).setFont(normalFont).setFontSize(12));
+                        document.add(new Paragraph("Anonymous: " + (feedback.get().isAnonymous() ? "Yes" : "No")).setFont(normalFont).setFontSize(12));
+                        document.add(new Paragraph("Remarks: " + feedback.get().getRemarks()).setFont(normalFont).setFontSize(12));
+                    }
+
+
+                    // Add space
+                    document.add(new Paragraph("\n"));
+
+                    // Table for Question-Answer List
+                    Table table = new Table(UnitValue.createPercentArray(new float[]{3, 5})).useAllAvailableWidth();
+                    table.setMarginBottom(20);
+
+                    // Add Table Header
+                    table.addHeaderCell(new Cell().add(new Paragraph("Question").setFont(titleFont).setFontSize(12).setFontColor(ColorConstants.WHITE))
+                            .setBackgroundColor(ColorConstants.DARK_GRAY)
+                            .setTextAlignment(TextAlignment.CENTER));
+
+                    table.addHeaderCell(new Cell().add(new Paragraph("Answer").setFont(titleFont).setFontSize(12).setFontColor(ColorConstants.WHITE))
+                            .setBackgroundColor(ColorConstants.DARK_GRAY)
+                            .setTextAlignment(TextAlignment.CENTER));
+
+                    // Add Table Rows
+                    for (QuestionAnswer qa : feedback.get().getQuestionAnswerList()) {
+                        table.addCell(new Cell().add(new Paragraph(qa.getQuestion()).setFont(normalFont).setFontSize(11)));
+                        table.addCell(new Cell().add(new Paragraph(qa.getAnswer()).setFont(normalFont).setFontSize(11)));
+                    }
+
+                    document.add(table);
+                //}
+
+                document.close();
+
+                // Set response headers for download
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Content-Disposition", "attachment; filename=feedback.pdf");
+
+                return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(("Error generating PDF: " + e.getMessage()).getBytes());
+            }
+        }
+    }
+        private Optional<Feedback> fetchFeedbackData(Long feedbackId) {
+        Optional<Feedback> feedback= feedbackRepo.findById(feedbackId);
+        if(!feedback.isPresent()){
+            System.out.println("Feedback not found for  :"+feedbackId);
+        }
+
+        return feedback;
     }
 }

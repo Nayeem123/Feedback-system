@@ -4,6 +4,7 @@ import feedback_system.dto.CategoryDto;
 import feedback_system.dto.FeedbackCategoryDto;
 import feedback_system.dto.FeedbackDto;
 import feedback_system.utility.ApiResponse;
+import org.springframework.http.ResponseEntity;
 
 public interface FeedbackService {
     ApiResponse showFeedbackCategories();
@@ -20,5 +21,6 @@ public interface FeedbackService {
     ApiResponse updateFeedback(FeedbackDto feedbackDto);
     ApiResponse saveCategoryForm(CategoryDto categoryDto);
     ApiResponse getCategoryForm(String username,String categoryName);
+    ResponseEntity<byte[]> feedbackDownload(Long feedbackId);
 
 }

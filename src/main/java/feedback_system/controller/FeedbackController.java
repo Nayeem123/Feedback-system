@@ -12,6 +12,7 @@ import feedback_system.service.UserService;
 import feedback_system.service.UserServiceImpl;
 import feedback_system.utility.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -99,4 +100,10 @@ public class FeedbackController {
         System.out.println(username);
         return feedbackService.getCategoryForm(username,categoryName);
     }
+
+    @GetMapping("/feedback/download/{id}")
+    public ResponseEntity<byte[]> downloadFeedback(@PathVariable(name = "id") Long feedbackId) {
+        return feedbackService.feedbackDownload(feedbackId);
+    }
+
 }
